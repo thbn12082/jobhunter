@@ -4,12 +4,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
-import vn.hoidanit.jobhunter.service.error.IdInvalidException;
+import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.PutMapping;
 @RestController
 public class UserController {
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // @GetMapping("/users/create")
@@ -32,6 +34,7 @@ public class UserController {
         // user.setEmail("thebinh@gmail.com");
         // user.setName("thebinh");
         // user.setPassword("0281");
+        user.setPassword(this.passwordEncoder.encode(user.getPassword()));
         this.userService.handleSaveUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
@@ -68,7 +71,7 @@ public class UserController {
             this.userService.handleSaveUser(user);
             find.setEmail(user.getEmail());
             find.setName(user.getName());
-            find.setPassword(user.getPassword());
+            find.setPassword(this.passwordEncoder.encode(user.getPassword()));
             return ResponseEntity.ok(find);
         }
     }
