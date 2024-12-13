@@ -36,6 +36,7 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
             ServerHttpRequest request,
             // response là lời trả về từ phía sever dành cho phía client
             ServerHttpResponse response) {
+
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int status = servletResponse.getStatus();
 
@@ -57,8 +58,6 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
             res.setMessage("CALL API SUCCESS");
             return res;
         }
-
         // body ở đây chính là data phản hồi của server dành cho client
-
     }
 }
