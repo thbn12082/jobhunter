@@ -36,6 +36,8 @@ public class SecurityUtil {
         Instant now = Instant.now();
         Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
 
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+
         // @formatter:off 
         JwtClaimsSet claims = JwtClaimsSet.builder() 
             .issuedAt(now) 
@@ -44,7 +46,7 @@ public class SecurityUtil {
             .claim("thebinh", authentication) 
             .build(); 
  
-        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build(); 
+        
         return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue(); 
     }
 }
