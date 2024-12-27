@@ -34,4 +34,7 @@ public class CompanyService {
         return this.companyRepository.findById(id);
     }
 
+    public void handleDelCompanyById(long id) {
+        this.companyRepository.deleteById(id);
+    }
 }

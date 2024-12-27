@@ -1,6 +1,5 @@
 package vn.hoidanit.jobhunter.controller;
 
-import java.time.Instant;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +11,8 @@ import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.util.error.UsernameInvalidException;
+
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -53,5 +54,11 @@ public class CompaniesController {
             Company tmp = this.companyService.handleSaveCompany(find);
             return ResponseEntity.ok(tmp);
         }
+    }
+
+    @DeleteMapping("/companies/{id}")
+    public ResponseEntity<Void> delCompany(@PathVariable("id") Long id) {
+        this.companyService.handleDelCompanyById(id);
+        return ResponseEntity.ok(null);
     }
 }

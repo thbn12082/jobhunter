@@ -13,4 +13,6 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
 
     Company findById(long id);
 
+    void deleteById(long id);
+
 }
