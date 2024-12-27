@@ -1,5 +1,7 @@
 package vn.hoidanit.jobhunter.service;
 
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.Company;
@@ -22,6 +24,14 @@ public class CompanyService {
             return true;
         }
         return false;
+    }
+
+    public List<Company> handleFindAllCompany() {
+        return this.companyRepository.findAll();
+    }
+
+    public Company findCompanyById(long id) {
+        return this.companyRepository.findById(id);
     }
 
 }
