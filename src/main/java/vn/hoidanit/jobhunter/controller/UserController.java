@@ -3,9 +3,12 @@ package vn.hoidanit.jobhunter.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import vn.hoidanit.jobhunter.domain.User;
+import vn.hoidanit.jobhunter.domain.dto.ResultPaginationDTO;
 import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +17,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import java.util.List;
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
@@ -57,9 +64,27 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    // @GetMapping("/users")
+    // public ResponseEntity<List<User>> getAllUser(
+    // @RequestParam("current") Optional<String> currentOptional,
+    // @RequestParam("pageSize") Optional<String> pageSizeOptional) {
+    // String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
+    // String sPageSizeOptional = pageSizeOptional.isPresent() ?
+    // pageSizeOptional.get() : "";
+    // Pageable pageable = PageRequest.of(Integer.parseInt(sCurrent) - 1,
+    // Integer.parseInt(sPageSizeOptional));
+    // return ResponseEntity.ok(this.userService.handleAllUsers(pageable));
+    // }
+
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUser() {
-        return ResponseEntity.ok(this.userService.handleAllUsers());
+    public ResponseEntity<ResultPaginationDTO> getAllUser(
+            @RequestParam("current") Optional<String> currentOptional,
+            @RequestParam("pageSize") Optional<String> pageSizeOptional) {
+        String sCurrent = currentOptional.isPresent() ? currentOptional.get() : "";
+        String sPageSizeOptional = pageSizeOptional.isPresent() ? pageSizeOptional.get() : "";
+        Pageable pageable = PageRequest.of(Integer.parseInt(sCurrent) - 1, Integer.parseInt(sPageSizeOptional));
+        // từ lớp cha gọi xuống lớp con
+        return ResponseEntity.ok(this.userService.fetchAllUser(pageable));
     }
 
     @PutMapping("/users")
