@@ -1,5 +1,6 @@
 package vn.hoidanit.jobhunter.repository;
 
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -14,6 +15,8 @@ public interface UserRepository extends JpaRepository<User, Long>, JpaSpecificat
     void deleteById(long id);
 
     User findById(long id);
+
+    List<User> findAll(Specification spe);
 
     List<User> findAll();
 

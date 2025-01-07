@@ -1,6 +1,7 @@
 package vn.hoidanit.jobhunter.service;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -39,17 +40,31 @@ public class UserService {
         return this.userRepository.findByEmail(email);
     }
 
-    public ResultPaginationDTO fetchAllUser(Pageable pageable) {
-        Page<User> pageUser = this.userRepository.findAll(pageable);
-        ResultPaginationDTO res = new ResultPaginationDTO();
-        Meta mt = new Meta();
-        mt.setPage(pageUser.getNumber() + 1);
-        mt.setPageSize(pageUser.getSize());
-        mt.setPages(pageUser.getTotalPages());
-        mt.setTotal(pageUser.getTotalElements());
+    // public ResultPaginationDTO fetchAllUser(Pageable pageable) {
+    // Page<User> pageUser = this.userRepository.findAll(pageable);
+    // ResultPaginationDTO res = new ResultPaginationDTO();
+    // Meta mt = new Meta();
+    // mt.setPage(pageUser.getNumber() + 1);
+    // mt.setPageSize(pageUser.getSize());
+    // mt.setPages(pageUser.getTotalPages());
+    // mt.setTotal(pageUser.getTotalElements());
 
-        res.setMeta(mt);
-        res.setResult(pageUser.getContent());
+    // res.setMeta(mt);
+    // res.setResult(pageUser.getContent());
+    // return res;
+    // }
+
+    public ResultPaginationDTO fetchAllUser(Specification pageable) {
+        List<User> pageUser = this.userRepository.findAll(pageable);
+        ResultPaginationDTO res = new ResultPaginationDTO();
+        // Meta mt = new Meta();
+        // mt.setPage(pageUser.getNumber() + 1);
+        // mt.setPageSize(pageUser.getSize());
+        // mt.setPages(pageUser.getTotalPages());
+        // mt.setTotal(pageUser.getTotalElements());
+
+        // res.setMeta(mt);
+        res.setResult(pageUser);
         return res;
     }
 }
