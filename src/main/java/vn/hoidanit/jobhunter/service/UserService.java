@@ -40,6 +40,10 @@ public class UserService {
         return this.userRepository.findByEmail(email);
     }
 
+    public boolean checkExistUserByEmail(String email) {
+        return this.userRepository.existsByEmail(email);
+    }
+
     // public ResultPaginationDTO fetchAllUser(Pageable pageable) {
     // Page<User> pageUser = this.userRepository.findAll(pageable);
     // ResultPaginationDTO res = new ResultPaginationDTO();
@@ -54,17 +58,17 @@ public class UserService {
     // return res;
     // }
 
-    public ResultPaginationDTO fetchAllUser(Specification pageable) {
-        List<User> pageUser = this.userRepository.findAll(pageable);
+    public ResultPaginationDTO fetchAllUser(Specification spe, Pageable pageable) {
+        Page<User> pageUser = this.userRepository.findAll(spe, pageable);
         ResultPaginationDTO res = new ResultPaginationDTO();
-        // Meta mt = new Meta();
-        // mt.setPage(pageUser.getNumber() + 1);
-        // mt.setPageSize(pageUser.getSize());
-        // mt.setPages(pageUser.getTotalPages());
-        // mt.setTotal(pageUser.getTotalElements());
+        Meta mt = new Meta();
+        mt.setPage(pageUser.getNumber() + 1);
+        mt.setPageSize(pageUser.getSize());
+        mt.setPages(pageUser.getTotalPages());
+        mt.setTotal(pageUser.getTotalElements());
 
-        // res.setMeta(mt);
-        res.setResult(pageUser);
+        res.setMeta(mt);
+        res.setResult(pageUser.getContent());
         return res;
     }
 }

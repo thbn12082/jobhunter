@@ -11,11 +11,14 @@ import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.dto.LoginDTO;
 import vn.hoidanit.jobhunter.domain.dto.RestLoginDTO;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
+import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
+@RequestMapping("/api/v1")
 public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
@@ -26,6 +29,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @ApiMessage("Login Form")
     public ResponseEntity<RestLoginDTO> login(@Valid @RequestBody LoginDTO login) {
 
         // Nạp input gồm username/password vào Security

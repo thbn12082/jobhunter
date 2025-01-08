@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletResponse;
 import vn.hoidanit.jobhunter.domain.RestResponse;
+import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 
 @RestControllerAdvice
 public class FormatRestResponse implements ResponseBodyAdvice<Object> {
@@ -29,6 +30,7 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
     public Object beforeBodyWrite(
             // phản hồi chưa format : body
             Object body,
+            // đây là phần dùng để custome return API
             MethodParameter returnType,
             MediaType selectedContentType,
             Class selectedConverterType,
@@ -55,7 +57,9 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         // case success
         else {
             res.setData(body);
-            res.setMessage("CALL API SUCCESS");
+            // res.setMessage("CALL API SUCCESS");
+            ApiMessage message = returnType.getMethodAnnotation(ApiMessage.class);
+            res.setMessage(message == null ? "CALL API SUCCESS" : message.value());
             return res;
         }
         // body ở đây chính là data phản hồi của server dành cho client
