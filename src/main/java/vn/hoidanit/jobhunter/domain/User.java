@@ -13,6 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
@@ -30,7 +31,9 @@ public class User {
     // giữa nguyên thủy và object mà thôi
 
     private String name;
+    @NotBlank(message = "email không được để trống")
     private String email;
+    @NotBlank(message = "password không được để trống")
     private String password;
     private int age;
     // private String gender; // male, female => chỉ có 2 cái này thôi, làm sao để

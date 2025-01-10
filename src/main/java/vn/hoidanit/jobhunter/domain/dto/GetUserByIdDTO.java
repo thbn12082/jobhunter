@@ -12,14 +12,14 @@ import vn.hoidanit.jobhunter.util.enumCustome.GenderEnum;
 
 @Getter
 @Setter
-public class UserDTO {
+public class GetUserByIdDTO {
     private long id;
-    private String name;
     private String email;
-    private int age;
+    private String name;
     @Enumerated(EnumType.STRING)
     private GenderEnum gender;
     private String address;
+    private int age;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")

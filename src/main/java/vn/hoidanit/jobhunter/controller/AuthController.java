@@ -8,8 +8,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.LoginDTO;
 import vn.hoidanit.jobhunter.domain.dto.RestLoginDTO;
+import vn.hoidanit.jobhunter.domain.dto.UserLoginDTO;
+import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
 import vn.hoidanit.jobhunter.util.annotation.ApiMessage;
 
@@ -22,10 +25,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AuthController {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
+    private final UserService userService;
 
-    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil) {
+    public AuthController(AuthenticationManagerBuilder authenticationManagerBuilder, SecurityUtil securityUtil,
+            UserService userService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -42,7 +48,13 @@ public class AuthController {
         // người dùng, đây là 1 cơ chế của Spring Security
         String accessToken = this.securityUtil.createToken(authentication);
         RestLoginDTO restLoginDTO = new RestLoginDTO();
+
+        User currentUserDB = this.userService.findUserByEmail(login.getUsername());
+
+        UserLoginDTO user = new UserLoginDTO(currentUserDB.getEmail(), currentUserDB.getName(), currentUserDB.getId());
         restLoginDTO.setAccessToken(accessToken);
+        restLoginDTO.setUserLoginDTO(user);
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return ResponseEntity.ok().body(restLoginDTO);
     }

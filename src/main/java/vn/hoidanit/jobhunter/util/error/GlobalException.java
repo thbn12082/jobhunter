@@ -12,20 +12,39 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import vn.hoidanit.jobhunter.domain.RestResponse;
 
+// @RestControllerAdvice là một annotation trong Spring được sử dụng để xử lý các ngoại lệ (exceptions) toàn cục 
+// cho các RESTful APIs. Nó là một phần mở rộng của @ControllerAdvice nhưng được tối ưu hóa để làm việc với các REST controllers 
+// (thường được đánh dấu bởi @RestController).
 @RestControllerAdvice
 public class GlobalException {
     @ExceptionHandler(value = {
             UsernameNotFoundException.class,
+            IdInvalidException.class,
             BadCredentialsException.class })
+    // khi muốn custome trả ra lỗi thì để class đó vô đây
     public ResponseEntity<RestResponse<Object>> handleAuthException(Exception ex) {
         RestResponse<Object> res = new RestResponse<>();
         res.setStatusCode(HttpStatus.BAD_REQUEST.value());
         res.setError(ex.getMessage());
-        res.setMessage("403 hoăc 401");
-        // cứ để
+        res.setMessage("403 For Bidden or 401 Unauthorized");
+        // cứ để trả về thẳng thế này luôn khi có lỗi xảy ra, lúc này, data = null
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+    }
+
+    // thích truyền class nào để nhận định lỗi thì truyền
+    @ExceptionHandler(value = {
+            NoResourceFoundException.class })
+    // khi muốn custome trả ra lỗi thì để class đó vô đây
+    public ResponseEntity<RestResponse<Object>> handleNotFoundException(Exception ex) {
+        RestResponse<Object> res = new RestResponse<>();
+        res.setStatusCode(HttpStatus.NOT_FOUND.value());
+        res.setError(ex.getMessage());
+        res.setMessage("404 Not found");
+        // cứ để trả về thẳng thế này luôn khi có lỗi xảy ra, lúc này, data = null
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
     }
 
