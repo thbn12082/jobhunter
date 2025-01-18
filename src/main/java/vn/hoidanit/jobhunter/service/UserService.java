@@ -139,4 +139,12 @@ public class UserService {
         find.setUpdatedAt(Instant.now());
         return find;
     }
+
+    public void updateUserToken(String email, String token) {
+        if (this.userRepository.existsByEmail(email)) {
+            User user = this.findUserByEmail(email);
+            user.setRefreshToken(token);
+            this.userRepository.save(user);
+        }
+    }
 }

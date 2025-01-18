@@ -17,6 +17,9 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+import vn.hoidanit.jobhunter.domain.dto.RestLoginDTO;
+import vn.hoidanit.jobhunter.domain.dto.UserLoginDTO;
+
 @Service
 public class SecurityUtil {
     public static final MacAlgorithm JWT_ALGORITHM = MacAlgorithm.HS512;
@@ -29,12 +32,41 @@ public class SecurityUtil {
     @Value("${hoidanit.jwt.base64-secret}")
     private String jwtKey;
 
-    @Value("${hoidanit.jwt.token-validity-in-seconds}")
-    private long jwtExpiration;
+    @Value("${hoidanit.jwt.access-token-validity-in-seconds}")
+    private long jwtAccessExpiration;
 
-    public String createToken(Authentication authentication) {
+    @Value("${hoidanit.jwt.refresh-token-validity-in-seconds}")
+    private long jwtRefreshExpiration;
+
+    // create Token
+    public String createAccessToken(Authentication authentication, UserLoginDTO res) {
         Instant now = Instant.now();
-        Instant validity = now.plus(this.jwtExpiration, ChronoUnit.SECONDS);
+        Instant validity = now.plus(this.jwtAccessExpiration, ChronoUnit.SECONDS);
+        // Thời gian sống của token
+
+        JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
+
+        // @formatter:off 
+        //đại diện cho những nội dung của JWT
+        JwtClaimsSet claims = JwtClaimsSet.builder() 
+            //thời điểm token được tạo
+            .issuedAt(now) 
+            //thời điểm token hết hạn
+            .expiresAt(validity) 
+            //Thông tin người dùng (tên hoặc ID) được lưu trong trường "subject", là chìa khóa để định danh người dùng là ai, trong bài toán của chúng ta thì là email
+            .subject(authentication.getName()) 
+            .claim("user", res) 
+            .build(); 
+
+        return this.jwtEncoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue(); 
+    }
+
+
+
+    //create refresh token
+    public String createRefreshToken(String email, UserLoginDTO dto) {
+        Instant now = Instant.now();
+        Instant validity = now.plus(this.jwtRefreshExpiration, ChronoUnit.SECONDS);
 
         JwsHeader jwsHeader = JwsHeader.with(JWT_ALGORITHM).build();
 
@@ -42,8 +74,9 @@ public class SecurityUtil {
         JwtClaimsSet claims = JwtClaimsSet.builder() 
             .issuedAt(now) 
             .expiresAt(validity) 
-            .subject(authentication.getName()) 
-            .claim("thebinh", authentication) 
+            .subject(email) 
+            //claim là để chỉ mô tả cho cái biến object mà thôi => trong bài toán của ta thì lưu thông tin user bào gồm: email, name, id tức là user => name, id, email(user này ta có thể coi nó như dạng JSON ý lưu key : value)
+            .claim("user", dto) 
             .build(); 
  
         

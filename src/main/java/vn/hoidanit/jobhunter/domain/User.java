@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -45,6 +46,9 @@ public class User {
     // còn nếu để là ORDINAL thì sẽ là 0, 1 trong db
     private GenderEnum gender;
     private String address;
+
+    // khi mà dữ liệu vượt quá 255 kí tự trong db => phải chuyển dang thành text
+    @Column(columnDefinition = "MEDIUMTEXT")
     private String refreshToken;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant createdAt;

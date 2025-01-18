@@ -34,8 +34,11 @@ public class SecurityConfiguration {
     @Value("${hoidanit.jwt.base64-secret}")
     private String jwtKey;
 
-    @Value("${hoidanit.jwt.token-validity-in-seconds}")
-    private String jwtExpiration;
+    @Value("${hoidanit.jwt.access-token-validity-in-seconds}")
+    private String jwtAccessExpiration;
+
+    @Value("${hoidanit.jwt.refresh-token-validity-in-seconds}")
+    private long jwtRefreshExpiration;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -53,17 +56,17 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         authz -> authz
-                                .requestMatchers("/", "/api/v1/login").permitAll()
+                                .requestMatchers("/", "/api/v1/auth/login").permitAll()
                                 // .anyRequest().permitAll())
                                 .anyRequest().authenticated())
                 .oauth2ResourceServer((oauth2) -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))
                 // này là truyền vào tham số mặc định thôi, tức là cấu hình phân Oauth2 mặc định
 
-                // .exceptionHandling(
-                // exceptions -> exceptions
-                // .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint()) // 401
-                // .accessDeniedHandler(new BearerTokenAccessDeniedHandler())) // 403
+                .exceptionHandling(
+                        exceptions -> exceptions
+                                .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint()) // 401
+                                .accessDeniedHandler(new BearerTokenAccessDeniedHandler())) // 403
                 .formLogin(f -> f.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
@@ -107,7 +110,7 @@ public class SecurityConfiguration {
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("");
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("thebinh");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("user");
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         return jwtAuthenticationConverter;
